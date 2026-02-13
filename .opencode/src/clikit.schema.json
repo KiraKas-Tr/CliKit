@@ -1,0 +1,423 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CliKit Plugin Configuration",
+  "description": "Configuration for CliKit OpenCode plugin",
+  "type": "object",
+  "properties": {
+    "disabled_agents": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of agent names to disable",
+      "examples": [["scout"]]
+    },
+    "disabled_commands": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of command names to disable",
+      "examples": [["debug", "import-plan"]]
+    },
+    "agents": {
+      "type": "object",
+      "description": "Override settings for specific agents",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "model": { "type": "string", "description": "Override model for this agent" },
+          "temperature": { "type": "number", "minimum": 0, "maximum": 2 },
+          "top_p": { "type": "number", "minimum": 0, "maximum": 1 },
+          "mode": { "enum": ["subagent", "primary", "all"] },
+          "disabled": { "type": "boolean", "description": "Disable this agent" },
+          "color": { "type": "string", "description": "Agent color in UI" },
+          "maxSteps": { "type": "integer", "minimum": 1, "description": "Maximum steps for agent" },
+          "tools": {
+            "type": "object",
+            "additionalProperties": { "type": "boolean" }
+          },
+          "permission": {
+            "type": "object",
+            "description": "Permission overrides for this agent",
+            "properties": {
+              "edit": { "enum": ["ask", "allow", "deny"] },
+              "bash": {
+                "oneOf": [
+                  { "enum": ["ask", "allow", "deny"] },
+                  { "type": "object", "additionalProperties": { "enum": ["ask", "allow", "deny"] } }
+                ]
+              },
+              "webfetch": { "enum": ["ask", "allow", "deny"] },
+              "doom_loop": { "enum": ["ask", "allow", "deny"] },
+              "external_directory": { "enum": ["ask", "allow", "deny"] }
+            }
+          }
+        }
+      }
+    },
+    "commands": {
+      "type": "object",
+      "description": "Override settings for specific commands",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "agent": { "type": "string", "description": "Agent to use for this command" },
+          "model": { "type": "string", "description": "Model to use for this command" },
+          "subtask": { "type": "boolean", "description": "Run as subtask" },
+          "description": { "type": "string", "description": "Command description" },
+          "template": { "type": "string", "description": "Command template/prompt" }
+        }
+      }
+    },
+    "lsp": {
+      "type": "object",
+      "description": "LSP server configurations to inject into OpenCode",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["command"],
+        "properties": {
+          "command": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Command and arguments to start the LSP server"
+          },
+          "extensions": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "File extensions this LSP handles (e.g., ['.ts', '.tsx'])"
+          },
+          "priority": { "type": "integer", "description": "Priority when multiple LSPs match (higher = preferred)" },
+          "disabled": { "type": "boolean", "description": "Disable this LSP server" },
+          "env": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "description": "Environment variables for the LSP process"
+          },
+          "initialization": {
+            "type": "object",
+            "description": "LSP initialization options"
+          }
+        }
+      },
+      "examples": [{
+        "typescript": {
+          "command": ["typescript-language-server", "--stdio"],
+          "extensions": [".ts", ".tsx", ".js", ".jsx"]
+        }
+      }]
+    },
+    "hooks": {
+      "type": "object",
+      "properties": {
+        "session_logging": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable session lifecycle logging"
+        },
+        "tool_logging": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable tool execution logging"
+        },
+        "todo_enforcer": {
+          "type": "object",
+          "description": "Todo continuation enforcer - warns when todos are incomplete",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Enable todo completion checking"
+            },
+            "warn_on_incomplete": {
+              "type": "boolean",
+              "default": true,
+              "description": "Log warning when todos are incomplete"
+            }
+          }
+        },
+        "empty_message_sanitizer": {
+          "type": "object",
+          "description": "Empty message sanitizer - prevents API errors from empty outputs",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Enable empty message sanitization"
+            },
+            "log_empty": {
+              "type": "boolean",
+              "default": true,
+              "description": "Log when empty messages are detected"
+            },
+            "placeholder": {
+              "type": "string",
+              "default": "(No output)",
+              "description": "Placeholder text for empty outputs"
+            }
+          }
+        },
+        "git_guard": {
+          "type": "object",
+          "description": "Blocks dangerous git commands (force push, hard reset, rm -rf)",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Enable git command guard"
+            },
+            "allow_force_with_lease": {
+              "type": "boolean",
+              "default": true,
+              "description": "Allow --force-with-lease as a safer alternative"
+            }
+          }
+        },
+        "security_check": {
+          "type": "object",
+          "description": "Scans for secrets and credentials before git commits",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Enable secret scanning"
+            },
+            "block_commits": {
+              "type": "boolean",
+              "default": false,
+              "description": "Block commits when secrets are detected (vs. warn only)"
+            }
+          }
+        },
+        "subagent_question_blocker": {
+          "type": "object",
+          "description": "Prevents subagents from asking clarifying questions",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Enable subagent question blocking"
+            }
+          }
+        },
+        "comment_checker": {
+          "type": "object",
+          "description": "Detects excessive AI-generated comments in code",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Enable comment density checking"
+            },
+            "threshold": {
+              "type": "number",
+              "default": 0.3,
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Comment-to-code ratio threshold (0.3 = 30%)"
+            }
+          }
+        },
+        "env_context": {
+          "type": "object",
+          "description": "Injects project structure, git branch, and build system info",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Enable environment context injection"
+            },
+            "include_git": {
+              "type": "boolean",
+              "default": true,
+              "description": "Include git branch and status"
+            },
+            "include_package": {
+              "type": "boolean",
+              "default": true,
+              "description": "Include package.json info"
+            },
+            "include_structure": {
+              "type": "boolean",
+              "default": true,
+              "description": "Include project directory structure"
+            },
+            "max_depth": {
+              "type": "integer",
+              "default": 2,
+              "minimum": 1,
+              "maximum": 5,
+              "description": "Max depth for directory structure scan"
+            }
+          }
+        },
+        "auto_format": {
+          "type": "object",
+          "description": "Runs project formatter after file edits (prettier, biome, dprint)",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable auto-formatting (off by default)"
+            },
+            "formatter": {
+              "type": "string",
+              "enum": ["prettier", "biome", "dprint"],
+              "description": "Override formatter (auto-detected if not set)"
+            },
+            "extensions": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "File extensions to format (e.g., ['.ts', '.tsx'])"
+            },
+            "log": {
+              "type": "boolean",
+              "default": true,
+              "description": "Log format operations"
+            }
+          }
+        },
+        "typecheck_gate": {
+          "type": "object",
+          "description": "Runs TypeScript type checking after .ts/.tsx file edits",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable typecheck gate (off by default)"
+            },
+            "tsconfig": {
+              "type": "string",
+              "description": "Path to tsconfig.json (auto-detected if not set)"
+            },
+            "log": {
+              "type": "boolean",
+              "default": true,
+              "description": "Log typecheck results"
+            },
+            "block_on_error": {
+              "type": "boolean",
+              "default": false,
+              "description": "Block file writes when type errors are found"
+            }
+          }
+        },
+        "session_notification": {
+          "type": "object",
+          "description": "Desktop notifications when sessions complete or error",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Enable desktop notifications"
+            },
+            "on_idle": {
+              "type": "boolean",
+              "default": true,
+              "description": "Notify when session goes idle"
+            },
+            "on_error": {
+              "type": "boolean",
+              "default": true,
+              "description": "Notify on session errors"
+            },
+            "title_prefix": {
+              "type": "string",
+              "default": "OpenCode",
+              "description": "Prefix for notification titles"
+            }
+          }
+        },
+        "truncator": {
+          "type": "object",
+          "description": "Dynamic output truncation to prevent context overflow",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Enable output truncation"
+            },
+            "max_output_chars": {
+              "type": "integer",
+              "default": 30000,
+              "description": "Maximum output characters before truncation"
+            },
+            "max_output_lines": {
+              "type": "integer",
+              "default": 500,
+              "description": "Maximum output lines before truncation"
+            },
+            "preserve_head_lines": {
+              "type": "integer",
+              "default": 50,
+              "description": "Lines to preserve from the start"
+            },
+            "preserve_tail_lines": {
+              "type": "integer",
+              "default": 50,
+              "description": "Lines to preserve from the end"
+            },
+            "log": {
+              "type": "boolean",
+              "default": true,
+              "description": "Log truncation events"
+            }
+          }
+        },
+        "compaction": {
+          "type": "object",
+          "description": "Preserves beads state and memory during context compaction",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Enable compaction state preservation"
+            },
+            "include_beads_state": {
+              "type": "boolean",
+              "default": true,
+              "description": "Include beads-village task state"
+            },
+            "include_memory_refs": {
+              "type": "boolean",
+              "default": true,
+              "description": "Include recent memory references"
+            },
+            "include_todo_state": {
+              "type": "boolean",
+              "default": true,
+              "description": "Include current todo list state"
+            },
+            "max_state_chars": {
+              "type": "integer",
+              "default": 5000,
+              "description": "Maximum characters for compaction context"
+            }
+          }
+        },
+        "swarm_enforcer": {
+          "type": "object",
+          "description": "Enforces task isolation for multi-agent swarms",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable swarm enforcement (off by default)"
+            },
+            "strict_file_locking": {
+              "type": "boolean",
+              "default": true,
+              "description": "Only allow edits to reserved files"
+            },
+            "block_unreserved_edits": {
+              "type": "boolean",
+              "default": false,
+              "description": "Block edits to unreserved files (vs. warn)"
+            },
+            "log": {
+              "type": "boolean",
+              "default": true,
+              "description": "Log enforcement decisions"
+            }
+          }
+        }
+      }
+    }
+  }
+}

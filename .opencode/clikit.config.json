@@ -1,0 +1,18 @@
+{
+  "$schema": "./src/clikit.schema.json",
+  "disabled_agents": [],
+  "disabled_commands": [],
+  "agents": {
+    "oracle": {
+      "model": "proxypal/gpt-5.1-codex-max"
+    },
+    "build": {
+      "model": "anthropic-byok/claude-opus-4.5"
+    }
+  },
+  "commands": {},
+  "hooks": {
+    "session_logging": true,
+    "tool_logging": false
+  }
+}
