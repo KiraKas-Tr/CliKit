@@ -80,7 +80,7 @@ Project config overrides user config.
     "session_notification": { "enabled": true },
     "truncator": { "enabled": true },
     "compaction": { "enabled": true },
-    "swarm_enforcer": { "enabled": false }
+    "swarm_enforcer": { "enabled": true }
   }
 }
 ```
@@ -112,7 +112,7 @@ Project config overrides user config.
 | `session_notification` | on | Desktop notifications on idle/error (Linux/macOS/Windows) |
 | `truncator` | on | Truncates large outputs to prevent context overflow |
 | `compaction` | on | Preserves beads state + memory during context compaction |
-| `swarm_enforcer` | **off** | Enforces task isolation in multi-agent swarms |
+| `swarm_enforcer` | on | Enforces task isolation in multi-agent swarms |
 
 ## Agents
 
