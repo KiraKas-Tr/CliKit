@@ -7,7 +7,7 @@
       "model": "proxypal/gpt-5.1-codex-max"
     },
     "build": {
-      "model": "anthropic-byok/claude-opus-4.5"
+      "model": "Modal/zai-org/GLM-5-FP8"
     }
   },
   "commands": {},

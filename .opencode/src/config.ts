@@ -202,7 +202,7 @@ const DEFAULT_CONFIG: CliKitConfig = {
       max_state_chars: 5000,
     },
     swarm_enforcer: {
-      enabled: false,
+      enabled: true,
       strict_file_locking: true,
       block_unreserved_edits: false,
       log: true,
