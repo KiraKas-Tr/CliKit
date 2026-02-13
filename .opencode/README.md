@@ -16,22 +16,18 @@ Curated agents, commands, skills, and memory system for OpenCode.
 
 ## Installation
 
-### Option 1: Via npm (Recommended)
-
 ```bash
-# In your project
+# Install plugin
 bun add -d clikit-plugin
 
-# Create .opencode/index.ts
-echo 'import CliKitPlugin from "clikit-plugin";
-export default CliKitPlugin;' > .opencode/index.ts
+# Initialize in project
+bun x clikit-plugin install
 ```
 
-### Option 2: Direct Copy
+## Quick Start
 
 ```bash
-# Copy the built plugin to OpenCode plugin directory
-cp dist/index.js ~/.config/opencode/plugin/clikit-plugin.js
+bun x clikit-plugin install
 ```
 
 ## Configuration
