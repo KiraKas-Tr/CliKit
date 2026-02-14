@@ -17,17 +17,20 @@ Curated agents, commands, skills, and memory system for OpenCode.
 ## Installation
 
 ```bash
-# Install plugin
-bun add -d clikit-plugin
-
-# Initialize in project
+# Install CliKit globally for OpenCode
 bun x clikit-plugin install
+
+# Restart OpenCode
 ```
+
+That's it! The plugin will be registered in `~/.config/opencode/opencode.json`.
 
 ## Quick Start
 
-```bash
-bun x clikit-plugin install
+After installation, use these commands:
+
+```
+/create → /plan → /start → /verify → /ship
 ```
 
 ## Configuration
