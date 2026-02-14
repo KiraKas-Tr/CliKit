@@ -1,6 +1,6 @@
 {
   "name": "clikit-plugin",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "OpenCode plugin with 10 agents, 19 commands, 48 skills, 14 hooks",
   "type": "module",
   "main": "./dist/index.js",
@@ -52,7 +52,7 @@
   },
   "homepage": "https://github.com/KiraKas-Tr/CliKit#readme",
   "dependencies": {
-    "@opencode-ai/plugin": "1.1.64",
+    "@opencode-ai/plugin": "1.2.1",
     "gray-matter": "^4.0.3"
   },
   "devDependencies": {
